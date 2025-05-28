@@ -9,7 +9,7 @@ export default function WooriBankDisplay() {
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const speed = 4; // px per frame
+  const speed = 2; // px per frame
   const animationIds = useRef<number[]>([]);
 
   useEffect(() => {

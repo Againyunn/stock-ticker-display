@@ -1,15 +1,27 @@
 // 개별 전광판 조회 페이지
-export const dynamic = "force-dynamic";
 import { DomainDisplay } from "@/components/DomainDisplay";
 import { domainConfigs } from "@/config/domains";
 
-export default async function DisplayItemPage({
-  params,
-}: {
-  params: { item: string };
-}) {
-  const domain = params.item;
-  const config = domainConfigs[domain];
+// 정적 경로 생성
+export async function generateStaticParams() {
+  return Object.keys(domainConfigs).map((domain) => ({
+    item: domain,
+  }));
+}
+
+interface PageProps {
+  params: {
+    item: string;
+  };
+}
+
+// 서버 컴포넌트로 명시
+export const dynamic = "force-static";
+
+export default async function DisplayItemPage({ params }: PageProps) {
+  // params를 Promise로 처리
+  const { item } = await Promise.resolve(params);
+  const config = domainConfigs[item];
 
   if (!config) {
     return <div>전광판 정보를 찾을 수 없습니다.</div>;
@@ -17,7 +29,7 @@ export default async function DisplayItemPage({
 
   return (
     <div className={`theme-${config.layout.theme}`}>
-      <DomainDisplay domain={domain} />
+      <DomainDisplay domain={item} />
     </div>
   );
 }

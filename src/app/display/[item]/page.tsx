@@ -10,9 +10,9 @@ export async function generateStaticParams() {
 }
 
 interface PageProps {
-  params: {
+  params: Promise<{
     item: string;
-  };
+  }>;
 }
 
 // 서버 컴포넌트로 명시
@@ -20,7 +20,7 @@ export const dynamic = "force-static";
 
 export default async function DisplayItemPage({ params }: PageProps) {
   // params를 Promise로 처리
-  const { item } = await Promise.resolve(params);
+  const { item } = await params;
   const config = domainConfigs[item];
 
   if (!config) {

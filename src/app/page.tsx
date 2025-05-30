@@ -1,3 +1,5 @@
+import { domainConfigs } from "@/config/domains";
+import DomainList from "@/components/DomainList";
 import Image from "next/image";
 
 export default function Home() {
@@ -8,9 +10,10 @@ export default function Home() {
         <span className="text-xl font-bold">연합인포맥스 전광판 관리</span>
       </header>
 
-      <div className="flex flex-row items-center justify-center">
-        <div className="flex flex-col items-center justify-center">
-          <span className="text-xl font-bold">전광판 목록</span>
+      <div className="flex flex-row items-center justify-center w-full h-full">
+        <div className="flex flex-col items-center justify-center w-full h-full mt-5">
+          <span className="text-md font-bold">전광판 목록</span>
+          <DomainList domainConfigs={domainConfigs} />
         </div>
       </div>
     </div>

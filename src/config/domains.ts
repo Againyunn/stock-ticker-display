@@ -4,6 +4,7 @@ export const domainConfigs: Record<string, DomainConfig> = {
   wooribank: {
     id: "wooribank",
     name: "우리은행",
+    iconUrl: "/icon/woori.svg",
     component: "WooribankDisplay",
     dataSource: {
       type: "api",

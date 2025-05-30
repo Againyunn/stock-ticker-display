@@ -1,6 +1,7 @@
 export interface DomainConfig {
   id: string;
   name: string;
+  iconUrl: string;
   component: string;
   dataSource: {
     type: "api" | "static";

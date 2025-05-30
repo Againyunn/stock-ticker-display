@@ -1,15 +1,16 @@
 "use client";
 import { useRef, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import StockCell from "./components/StockCell";
 import { stockDupDummy } from "@/services/dummy/stock";
-import "./WooriBankDisplay.css";
 
 export default function WooriBankDisplay() {
+  const searchParams = useSearchParams();
   const tickerRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const speed = 2; // px per frame
+  const speed = Number(searchParams?.get("speed")) || 2; // 기본값 2, URL에서 speed 파라미터를 받아옴
   const animationIds = useRef<number[]>([]);
 
   useEffect(() => {

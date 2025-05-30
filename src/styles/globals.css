@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./wooribank/fonts.css";
 
 :root {
   --background: #ffffff;
@@ -9,8 +8,13 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* 고객사별 폰트 설정 */
+  /* 우리은행 폰트 설정 */
+  --font-wooridaumR: var(--font-wooridaumR);
+  --font-wooridaumL: var(--font-wooridaumL);
+  --font-wooridaumB: var(--font-wooridaumB);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,7 +27,6 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  /* font-family: "WooridaumR"; */
   margin: 0;
   padding: 0;
 }

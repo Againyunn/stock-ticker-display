@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
 import "@/styles/globals.css";
+import {
+  wooridaumB,
+  wooridaumL,
+  wooridaumR,
+} from "./fonts/wooribank/wooridaum";
 
 export const metadata: Metadata = {
   title: "연합인포맥스",
@@ -12,11 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
+    <html
+      lang="ko"
+      className={`${wooridaumB.variable} ${wooridaumR.variable} ${wooridaumL.variable} `}
+    >
       <head>
         <link rel="icon" href="/icon/infomax.svg" />
       </head>
-      <body>{children}</body>
+      <body className="font-wooridaumR">{children}</body>
     </html>
   );
 }

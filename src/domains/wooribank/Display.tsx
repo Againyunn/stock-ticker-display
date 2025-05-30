@@ -45,7 +45,9 @@ export default function WooriBankDisplay() {
   const sliceSize = stockDupDummy.length * 2;
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden px-[60px] py-[42px] text-center relative">
+    <div
+      className={`w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden px-[60px] py-[42px] text-center relative `}
+    >
       <div className="flex flex-col gap-[42px]">
         {[0, 1].map((rowIndex) => {
           const slicedData = [...stockDupDummy, ...stockDupDummy].slice(

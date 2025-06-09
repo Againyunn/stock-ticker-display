@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import Image from "next/image";
 import { calculate } from "../utils/calculate";
 
@@ -9,86 +10,123 @@ interface StockCell2Props {
   percentage: string;
 }
 
-export default function StockCell2({
+const StockCell2 = React.memo(function StockCell2({
   img,
   name,
   price,
   flag,
   percentage,
 }: StockCell2Props) {
-  const drawFlag = (flag: string) => {
+  // 모든 계산을 미리 메모이제이션
+  const formattedPrice = useMemo(
+    () => calculate.formattedPrice(price),
+    [price]
+  );
+
+  const flagData = useMemo(() => {
     const flagNum = parseFloat(flag);
     const flagAbs = Math.abs(flagNum);
 
     if (flagNum > 0) {
-      return (
-        <div
-          className={`flex flex-row flex-nowrap text-[#FF3B3B] font-wooridaumB`}
-        >
-          ▲ {flagAbs}
-        </div>
-      );
+      return { symbol: "▲", value: flagAbs, color: "#FF3B3B" };
     } else if (flagNum < 0) {
-      return (
-        <div
-          className={`flex flex-row flex-nowrap text-[#3A9FF1] font-wooridaumB`}
-        >
-          ▼ {flagAbs}
-        </div>
-      );
+      return { symbol: "▼", value: flagAbs, color: "#3A9FF1" };
     } else {
-      return (
-        <div className={`flex flex-row flex-nowrap text-white font-wooridaumB`}>
-          - {flagAbs}
-        </div>
-      );
+      return { symbol: "-", value: flagAbs, color: "white" };
     }
-  };
+  }, [flag]);
 
-  const drawPercentage = (percentage: string) => {
+  const percentageData = useMemo(() => {
     const percentageNum = parseFloat(percentage);
 
     if (percentageNum > 0) {
-      return (
-        <div className={`text-[#FF3B3B] font-wooridaumB`}>+{percentage}%</div>
-      );
+      return { text: `+${percentage}%`, color: "#FF3B3B" };
     } else if (percentageNum < 0) {
-      return (
-        <div className={`text-[#3A9FF1] font-wooridaumB`}>{percentage}%</div>
-      );
+      return { text: `${percentage}%`, color: "#3A9FF1" };
     } else {
-      return <div className={`text-white font-wooridaumB`}>{percentage}%</div>;
+      return { text: `${percentage}%`, color: "white" };
     }
-  };
+  }, [percentage]);
+
+  const imageSrc = useMemo(() => `/icon/${img}`, [img]);
+  const imageAlt = useMemo(() => name + img, [name, img]);
 
   return (
     <div
-      className={`flex flex-nowrap flex-col items-center text-white whitespace-nowrap pl-[107px] pr-[63px] py-[53px]`}
-      //   style={{ flex: "0 0 auto" }} // 가변 너비 고정, shrink 안 함
+      className="flex flex-nowrap flex-col items-center text-white whitespace-nowrap pl-[107px] pr-[63px] py-[53px]"
+      style={{
+        // 최적화된 CSS
+        transform: "translate3d(0, 0, 0)",
+        willChange: "transform",
+        backfaceVisibility: "hidden",
+        WebkitBackfaceVisibility: "hidden",
+        WebkitFontSmoothing: "antialiased",
+        textRendering: "optimizeSpeed",
+        contain: "layout style",
+        isolation: "isolate",
+      }}
     >
-      <div className="flex flex-nowrap w-full h-[75px] items-center p-0">
-        <Image src={`/icon/${img}`} alt={name + img} width={80} height={60} />
+      <div
+        className="flex flex-nowrap w-full h-[75px] items-center p-0"
+        style={{ contain: "layout style" }}
+      >
+        <div style={{ width: 80, height: 60, flexShrink: 0 }}>
+          <Image
+            src={imageSrc}
+            alt={imageAlt}
+            width={80}
+            height={60}
+            priority
+            quality={75}
+            style={{
+              objectFit: "contain",
+              display: "block",
+            }}
+            sizes="80px"
+          />
+        </div>
 
-        <div className="text-[70px] leading-[100%] ml-[30px] min-w-[200px] font-wooridaumR">
+        <div
+          className="text-[70px] leading-[100%] ml-[30px] min-w-[200px] font-wooridaumR"
+          style={{ contain: "layout style" }}
+        >
           {name}
         </div>
 
-        <div className="text-[75px] leading-[100%] font-bold ml-[30px] min-w-[150px] font-wooridaumB">
-          {calculate.formattedPrice(price)}
+        <div
+          className="text-[75px] leading-[100%] font-bold ml-[30px] min-w-[150px] font-wooridaumB"
+          style={{ contain: "layout style" }}
+        >
+          {formattedPrice}
         </div>
       </div>
-      <div className="flex flex-nowrap justify-end items-end w-full h-[75px]">
+
+      <div
+        className="flex flex-nowrap justify-end items-end w-full h-[75px]"
+        style={{ contain: "layout style" }}
+      >
         <div
-          className={`min-w-[100px] leading-[100%] text-[55px] font-bold ml-[50px] font-wooridaumB`}
+          className="min-w-[100px] leading-[100%] text-[55px] font-bold ml-[50px] font-wooridaumB flex flex-row flex-nowrap"
+          style={{
+            color: flagData.color,
+            contain: "layout style",
+          }}
         >
-          {drawFlag(flag)}
+          {flagData.symbol} {flagData.value}
         </div>
+
         <div
-          className={`text-[55px] leading-[100%] font-bold ml-[50px] min-w-[150px] font-wooridaumB`}
+          className="text-[55px] leading-[100%] font-bold ml-[50px] min-w-[150px] font-wooridaumB"
+          style={{
+            color: percentageData.color,
+            contain: "layout style",
+          }}
         >
-          {drawPercentage(percentage)}
+          {percentageData.text}
         </div>
       </div>
     </div>
   );
-}
+});
+
+export default StockCell2;

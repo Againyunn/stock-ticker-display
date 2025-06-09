@@ -15,18 +15,23 @@ interface StockCellProps {
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
+  const speed = Number(searchParams?.get("speed")) || 2;
+  const direction = searchParams?.get("direction") || "rtl"; // rtl: 우->좌, ltr: 좌->우
+  const isLTR = direction === "ltr";
+
   const tickerRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const speed = Number(searchParams?.get("speed")) || 2;
-  const direction = searchParams?.get("direction") || "rtl"; // rtl: 우->좌, ltr: 좌->우
-  const animationIds = useRef<number[]>([]);
+  const containerRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
+
   const offsets = useRef<number[]>([0, 0]);
+  const widths = useRef<number[]>([0, 0]);
+  const animationId = useRef<number>(0);
 
-  const isLTR = direction === "ltr";
-
-  // 예시 섹션 구성 (역순: section3 → section2 → section1)
   const sections: StockCellProps[][] = useMemo(() => {
     const perSectionSize = Math.floor(stockDupDummy.length / 3);
     return [
@@ -36,7 +41,6 @@ export default function WooriBankDisplay() {
     ];
   }, []);
 
-  // 1행에 들어갈 수 있는 대략적인 아이템 수 (화면 크기에 따라 조정)
   const itemPerRow = 34;
   const rowData: [StockCellProps[], StockCellProps[]] = [[], []];
   let currentRow = 0;
@@ -51,64 +55,66 @@ export default function WooriBankDisplay() {
   }
 
   useEffect(() => {
-    const initAndAnimate = (rowIndex: number) => {
-      const ticker = tickerRefs[rowIndex].current;
-      if (!ticker) return;
-
-      const width = ticker.scrollWidth / 2;
-      offsets.current[rowIndex] = isLTR ? -width : 0;
-
-      const animate = () => {
-        const ticker = tickerRefs[rowIndex].current;
+    const initializeWidths = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const ticker = ref.current;
         if (!ticker) return;
+        const scrollWidth = ticker.scrollWidth / 2;
+        widths.current[idx] = scrollWidth;
+        offsets.current[idx] = isLTR ? -scrollWidth : 0;
+      });
+    };
+
+    const animate = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const el = ref.current;
+        if (!el) return;
+
+        const width = widths.current[idx];
 
         if (isLTR) {
-          offsets.current[rowIndex] += speed;
-          if (offsets.current[rowIndex] >= 0) {
-            offsets.current[rowIndex] = -width;
-          }
+          offsets.current[idx] += speed;
+          if (offsets.current[idx] >= 0) offsets.current[idx] = -width;
         } else {
-          offsets.current[rowIndex] -= speed;
-          if (Math.abs(offsets.current[rowIndex]) >= width) {
-            offsets.current[rowIndex] = 0;
-          }
+          offsets.current[idx] -= speed;
+          if (Math.abs(offsets.current[idx]) >= width) offsets.current[idx] = 0;
         }
 
-        ticker.style.transform = `translateX(${offsets.current[rowIndex]}px)`;
-        animationIds.current[rowIndex] = requestAnimationFrame(animate);
-      };
+        el.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
+      });
 
-      animationIds.current[rowIndex] = requestAnimationFrame(animate);
+      animationId.current = requestAnimationFrame(animate);
     };
 
-    tickerRefs.forEach((_, i) => {
-      initAndAnimate(i);
-    });
+    initializeWidths();
+    animationId.current = requestAnimationFrame(animate);
 
-    return () => {
-      animationIds.current.forEach((id) => cancelAnimationFrame(id));
-    };
+    return () => cancelAnimationFrame(animationId.current);
   }, [speed, direction]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden text-center relative">
+    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative">
       <div className="flex flex-col gap-[42px]">
         {[0, 1].map((rowIndex) => {
           const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
-
           return (
             <div
               key={`row-${rowIndex}`}
-              ref={tickerRefs[rowIndex]}
-              className="flex flex-nowrap items-center gap-[50px] will-change-transform"
-              style={{
-                width: "max-content",
-                transform: isLTR ? `translateX(-9999px)` : `translateX(0px)`,
-              }}
+              ref={containerRefs[rowIndex]}
+              className="overflow-hidden w-full"
             >
-              {duplicated.map((stock, idx) => (
-                <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
-              ))}
+              <div
+                ref={tickerRefs[rowIndex]}
+                className="flex flex-nowrap items-center gap-[50px] will-change-transform"
+                style={{
+                  width: "max-content",
+                  transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+                }}
+              >
+                {duplicated.map((stock, idx) => (
+                  <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
+                ))}
+              </div>
             </div>
           );
         })}

@@ -29,4 +29,5 @@ body {
   color: var(--foreground);
   margin: 0;
   padding: 0;
+  line-height: 100%;
 }

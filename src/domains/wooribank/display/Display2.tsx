@@ -1,8 +1,8 @@
 "use client";
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import StockCell from "../components/StockCell";
 import { stockDupDummy } from "@/services/dummy/stock";
+import StockCell2 from "../components/StockCell2";
 
 interface StockCellProps {
   img: string;
@@ -91,7 +91,7 @@ export default function WooriBankDisplay() {
   }, [speed, direction]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden px-[60px] py-[42px] text-center relative">
+    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden text-center relative">
       <div className="flex flex-col gap-[42px]">
         {[0, 1].map((rowIndex) => {
           const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
@@ -107,7 +107,7 @@ export default function WooriBankDisplay() {
               }}
             >
               {duplicated.map((stock, idx) => (
-                <StockCell key={`${rowIndex}-${idx}`} {...stock} />
+                <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
               ))}
             </div>
           );

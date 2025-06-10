@@ -8,8 +8,8 @@ export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
 
   // URL 파라미터에서 speed와 direction 가져오기 (기본값 설정)
-  const speed = Number(searchParams?.get("speed")) || 2; // 기본값을 Display2와 동일하게 2로 설정
-  const direction = searchParams?.get("direction") || "rtl"; // 기본 rtl (우->좌)
+  const speed = Number(searchParams?.get("speed")) || 2;
+  const direction = searchParams?.get("direction") || "rtl";
   const isLTR = direction === "ltr";
 
   const tickerRefs = [
@@ -25,37 +25,23 @@ export default function WooriBankDisplay() {
   const widths = useRef<number[]>([0, 0]);
   const animationId = useRef<number>(0);
 
-  // 무한 스크롤을 위해 데이터를 충분히 반복
-  const getRepeatedData = (
-    data: Array<{
-      img?: string;
-      name: string;
-      unit: string;
-      price: string;
-      flag: string;
-      percentage: string;
-    }>
-  ) => {
-    // 최소 반복 횟수를 계산 (화면을 충분히 채우기 위해)
-    const minRepeats = Math.max(20, Math.ceil(40 / data.length)); // 최소 20번 또는 40개 항목이 되도록
-    const repeated = [];
+  // 원본 데이터 배열 정의
+  const originalData = [stockDupDummy1a, stockDupDummy1b];
 
-    for (let i = 0; i < minRepeats; i++) {
-      repeated.push(...data);
-    }
+  // 무한 스크롤을 위해 데이터를 충분히 반복하되 최적화된 방식으로
+  const rowData = useMemo(() => {
+    return originalData.map((data) => {
+      // 최소 반복 횟수를 계산 (화면을 충분히 채우기 위해)
+      const minRepeats = Math.max(20, Math.ceil(40 / data.length));
+      const repeated = [];
 
-    return repeated;
-  };
+      for (let i = 0; i < minRepeats; i++) {
+        repeated.push(...data);
+      }
 
-  const duplicatedData1a = useMemo(() => {
-    return getRepeatedData(stockDupDummy1a);
+      return repeated;
+    });
   }, []);
-
-  const duplicatedData1b = useMemo(() => {
-    return getRepeatedData(stockDupDummy1b);
-  }, []);
-
-  const rowData = [duplicatedData1a, duplicatedData1b];
 
   useEffect(() => {
     const initializeWidths = () => {
@@ -63,10 +49,10 @@ export default function WooriBankDisplay() {
         const ticker = ref.current;
         if (!ticker) return;
 
-        // 실제 데이터의 반복 단위 길이 계산
-        const originalDataLength =
-          idx === 0 ? stockDupDummy1a.length : stockDupDummy1b.length;
-        const singleItemWidth = ticker.scrollWidth / rowData[idx].length;
+        // Display2 방식을 참고한 width 계산 최적화
+        const originalDataLength = originalData[idx].length;
+        const totalItems = rowData[idx].length;
+        const singleItemWidth = ticker.scrollWidth / totalItems;
         const singleCycleWidth = singleItemWidth * originalDataLength;
 
         widths.current[idx] = singleCycleWidth;
@@ -95,55 +81,49 @@ export default function WooriBankDisplay() {
       animationId.current = requestAnimationFrame(animate);
     };
 
-    initializeWidths();
-    animationId.current = requestAnimationFrame(animate);
+    // Display2 방식을 참고한 초기화 순서 최적화
+    const timeoutId = setTimeout(() => {
+      initializeWidths();
+      animationId.current = requestAnimationFrame(animate);
+    }, 0);
 
-    return () => cancelAnimationFrame(animationId.current);
-  }, [speed, direction, isLTR]);
+    return () => {
+      clearTimeout(timeoutId);
+      cancelAnimationFrame(animationId.current);
+    };
+  }, [speed, direction, isLTR, rowData]);
 
   return (
     <div className="w-full min-w-[19712px] h-[256px] overflow-hidden relative flex flex-col p-0">
-      {/* 첫 번째 행 - stockDupDummy1a */}
-      <div
-        ref={containerRefs[0]}
-        className="h-[128px] flex items-center overflow-hidden relative bg-[#192D51]"
-      >
-        <div
-          ref={tickerRefs[0]}
-          className="flex flex-nowrap items-center will-change-transform"
-          style={{
-            width: "max-content",
-            transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
-          }}
-        >
-          {rowData[0].map((stock, idx) => (
-            <StockCell key={`row1-${idx}`} {...stock} />
-          ))}
-        </div>
-      </div>
+      {/* Display2 방식을 참고한 컴포넌트 구조 최적화 */}
+      {[0, 1].map((rowIndex) => {
+        const bgColor = rowIndex === 0 ? "bg-[#192D51]" : "bg-[#051839]";
 
-      {/* 두 번째 행 - stockDupDummy1b */}
-      <div
-        ref={containerRefs[1]}
-        className="h-[128px] flex items-center overflow-hidden relative bg-[#051839]"
-      >
-        <div
-          ref={tickerRefs[1]}
-          className="flex flex-nowrap items-center will-change-transform"
-          style={{
-            width: "max-content",
-            transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
-          }}
-        >
-          {rowData[1].map((stock, idx) => (
-            <StockCell
-              key={`row2-${idx}`}
-              classes={idx === 0 ? "pl-[465px]" : ""}
-              {...stock}
-            />
-          ))}
-        </div>
-      </div>
+        return (
+          <div
+            key={`row-${rowIndex}`}
+            ref={containerRefs[rowIndex]}
+            className={`h-[128px] flex items-center overflow-hidden relative ${bgColor}`}
+          >
+            <div
+              ref={tickerRefs[rowIndex]}
+              className="flex flex-nowrap items-center will-change-transform"
+              style={{
+                width: "max-content",
+                transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+              }}
+            >
+              {rowData[rowIndex].map((stock, idx) => (
+                <StockCell
+                  key={`row${rowIndex + 1}-${idx}`}
+                  classes={rowIndex === 1 && idx === 0 ? "pl-[465px]" : ""}
+                  {...stock}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

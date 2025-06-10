@@ -2,116 +2,147 @@
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import StockCell from "../components/StockCell";
-import { stockDupDummy2 } from "@/services/dummy/stock";
-
-interface StockCellProps {
-  img: string;
-  name: string;
-  unit: string;
-  price: string;
-  flag: string;
-  percentage: string;
-}
+import { stockDupDummy1a, stockDupDummy1b } from "@/services/dummy/stock";
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
+
+  // URL 파라미터에서 speed와 direction 가져오기 (기본값 설정)
+  const speed = Number(searchParams?.get("speed")) || 2; // 기본값을 Display2와 동일하게 2로 설정
+  const direction = searchParams?.get("direction") || "rtl"; // 기본 rtl (우->좌)
+  const isLTR = direction === "ltr";
+
   const tickerRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const speed = Number(searchParams?.get("speed")) || 2;
-  const direction = searchParams?.get("direction") || "rtl"; // rtl: 우->좌, ltr: 좌->우
-  const animationIds = useRef<number[]>([]);
+  const containerRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
+  ];
+
   const offsets = useRef<number[]>([0, 0]);
+  const widths = useRef<number[]>([0, 0]);
+  const animationId = useRef<number>(0);
 
-  const isLTR = direction === "ltr";
+  // 무한 스크롤을 위해 데이터를 충분히 반복
+  const getRepeatedData = (
+    data: Array<{
+      img?: string;
+      name: string;
+      unit: string;
+      price: string;
+      flag: string;
+      percentage: string;
+    }>
+  ) => {
+    // 최소 반복 횟수를 계산 (화면을 충분히 채우기 위해)
+    const minRepeats = Math.max(20, Math.ceil(40 / data.length)); // 최소 20번 또는 40개 항목이 되도록
+    const repeated = [];
 
-  // 예시 섹션 구성 (역순: section3 → section2 → section1)
-  const sections: StockCellProps[][] = useMemo(() => {
-    const perSectionSize = Math.floor(stockDupDummy2.length / 3);
-    return [
-      stockDupDummy2.slice(perSectionSize * 2),
-      stockDupDummy2.slice(perSectionSize, perSectionSize * 2),
-      stockDupDummy2.slice(0, perSectionSize),
-    ];
+    for (let i = 0; i < minRepeats; i++) {
+      repeated.push(...data);
+    }
+
+    return repeated;
+  };
+
+  const duplicatedData1a = useMemo(() => {
+    return getRepeatedData(stockDupDummy1a);
   }, []);
 
-  // 1행에 들어갈 수 있는 대략적인 아이템 수 (화면 크기에 따라 조정)
-  const itemPerRow = 34;
-  const rowData: [StockCellProps[], StockCellProps[]] = [[], []];
-  let currentRow = 0;
+  const duplicatedData1b = useMemo(() => {
+    return getRepeatedData(stockDupDummy1b);
+  }, []);
 
-  for (const section of sections) {
-    if (rowData[currentRow].length + section.length <= itemPerRow) {
-      rowData[currentRow].push(...section);
-    } else {
-      currentRow = 1;
-      rowData[currentRow].push(...section);
-    }
-  }
+  const rowData = [duplicatedData1a, duplicatedData1b];
 
   useEffect(() => {
-    const initAndAnimate = (rowIndex: number) => {
-      const ticker = tickerRefs[rowIndex].current;
-      if (!ticker) return;
-
-      const width = ticker.scrollWidth / 2;
-      offsets.current[rowIndex] = isLTR ? -width : 0;
-
-      const animate = () => {
-        const ticker = tickerRefs[rowIndex].current;
+    const initializeWidths = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const ticker = ref.current;
         if (!ticker) return;
 
+        // 실제 데이터의 반복 단위 길이 계산
+        const originalDataLength =
+          idx === 0 ? stockDupDummy1a.length : stockDupDummy1b.length;
+        const singleItemWidth = ticker.scrollWidth / rowData[idx].length;
+        const singleCycleWidth = singleItemWidth * originalDataLength;
+
+        widths.current[idx] = singleCycleWidth;
+        offsets.current[idx] = isLTR ? -singleCycleWidth : 0;
+      });
+    };
+
+    const animate = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const el = ref.current;
+        if (!el) return;
+
+        const width = widths.current[idx];
+
         if (isLTR) {
-          offsets.current[rowIndex] += speed;
-          if (offsets.current[rowIndex] >= 0) {
-            offsets.current[rowIndex] = -width;
-          }
+          offsets.current[idx] += speed;
+          if (offsets.current[idx] >= 0) offsets.current[idx] = -width;
         } else {
-          offsets.current[rowIndex] -= speed;
-          if (Math.abs(offsets.current[rowIndex]) >= width) {
-            offsets.current[rowIndex] = 0;
-          }
+          offsets.current[idx] -= speed;
+          if (Math.abs(offsets.current[idx]) >= width) offsets.current[idx] = 0;
         }
 
-        ticker.style.transform = `translateX(${offsets.current[rowIndex]}px)`;
-        animationIds.current[rowIndex] = requestAnimationFrame(animate);
-      };
+        el.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
+      });
 
-      animationIds.current[rowIndex] = requestAnimationFrame(animate);
+      animationId.current = requestAnimationFrame(animate);
     };
 
-    tickerRefs.forEach((_, i) => {
-      initAndAnimate(i);
-    });
+    initializeWidths();
+    animationId.current = requestAnimationFrame(animate);
 
-    return () => {
-      animationIds.current.forEach((id) => cancelAnimationFrame(id));
-    };
-  }, [speed, direction]);
+    return () => cancelAnimationFrame(animationId.current);
+  }, [speed, direction, isLTR]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden px-[60px] py-[42px] text-center relative">
-      <div className="flex flex-col gap-[42px]">
-        {[0, 1].map((rowIndex) => {
-          const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
+    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative flex flex-col p-0">
+      {/* 첫 번째 행 - stockDupDummy1a */}
+      <div
+        ref={containerRefs[0]}
+        className="h-[128px] flex items-center overflow-hidden relative"
+      >
+        <div
+          ref={tickerRefs[0]}
+          className="flex flex-nowrap items-center will-change-transform"
+          style={{
+            width: "max-content",
+            transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+          }}
+        >
+          {rowData[0].map((stock, idx) => (
+            <StockCell key={`row1-${idx}`} {...stock} />
+          ))}
+        </div>
+      </div>
 
-          return (
-            <div
-              key={`row-${rowIndex}`}
-              ref={tickerRefs[rowIndex]}
-              className="flex flex-nowrap items-center gap-[50px] will-change-transform"
-              style={{
-                width: "max-content",
-                transform: isLTR ? `translateX(-9999px)` : `translateX(0px)`,
-              }}
-            >
-              {duplicated.map((stock, idx) => (
-                <StockCell key={`${rowIndex}-${idx}`} {...stock} />
-              ))}
-            </div>
-          );
-        })}
+      {/* 두 번째 행 - stockDupDummy1b */}
+      <div
+        ref={containerRefs[1]}
+        className="h-[128px] flex items-center overflow-hidden relative"
+      >
+        <div
+          ref={tickerRefs[1]}
+          className="flex flex-nowrap items-center will-change-transform"
+          style={{
+            width: "max-content",
+            transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+          }}
+        >
+          {rowData[1].map((stock, idx) => (
+            <StockCell
+              key={`row2-${idx}`}
+              classes={idx === 0 ? "pl-[465px]" : ""}
+              {...stock}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

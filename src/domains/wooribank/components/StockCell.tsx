@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useMemo } from "react";
 
 interface StockCellProps {
-  img: string;
+  img?: string;
   name: string;
   price: string;
   flag: string;
@@ -15,7 +15,7 @@ interface StockCellType extends StockCellProps {
 }
 
 export default function StockCell({
-  img,
+  img = "",
   name,
   price,
   flag,
@@ -62,14 +62,16 @@ export default function StockCell({
 
     if (percentageNum > 0) {
       return (
-        <div className={`text-[#FF3B3B] font-wooridaumB`}>(+{percentage})</div>
+        <div className={`text-[#FF3B3B] font-wooridaumB`}>(+{percentage}%)</div>
       );
     } else if (percentageNum < 0) {
       return (
-        <div className={`text-[#3A9FF1] font-wooridaumB`}>({percentage})</div>
+        <div className={`text-[#3A9FF1] font-wooridaumB`}>({percentage}%)</div>
       );
     } else {
-      return <div className={`text-white font-wooridaumB`}>({percentage})</div>;
+      return (
+        <div className={`text-white font-wooridaumB`}>({percentage}%)</div>
+      );
     }
   };
 
@@ -96,24 +98,22 @@ export default function StockCell({
           <Image src={imageSrc} alt={imageAlt} width={80} height={60} />
         </div>
       )}
-      <div
-        className={`flex-shrink-0 text-[60px] ml-[25px] min-w-[200px] font-wooridaumR`}
-      >
+      <div className={`text-[60px] leading-[100%] ml-[25px] font-wooridaumR`}>
         {name}
       </div>
       <div
-        className={`flex-shrink-0 text-[70px] ml-[25px] min-w-[150px] font-wooridaumB`}
+        className={`text-[70px] leading-[100%] ml-[25px] min-w-[150px] font-wooridaumB`}
       >
         {formattedPrice(price)}
       </div>
 
       <div
-        className={`flex-shrink-0 min-w-[100px] text-[45px] ml-[25px] font-wooridaumR`}
+        className={`min-w-[100px] leading-[100%] text-[45px] ml-[25px] font-wooridaumR`}
       >
         {drawFlag(flag)}
       </div>
       <div
-        className={`flex-shrink-0 text-[45px] ml-[50px] ml-[25px] min-w-[150px] font-wooridaumR`}
+        className={`text-[45px] leading-[100%] ml-[50px] ml-[25px] min-w-[150px] font-wooridaumR`}
       >
         {drawPercentage(percentage)}
       </div>

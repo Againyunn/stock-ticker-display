@@ -1,17 +1,8 @@
 "use client";
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { stockDupDummy } from "@/services/dummy/stock";
-import StockCell2 from "../components/StockCell2";
-
-interface StockCellProps {
-  img: string;
-  name: string;
-  unit: string;
-  price: string;
-  flag: string;
-  percentage: string;
-}
+import { stockDupDummy2 } from "@/services/dummy/stock";
+import StockCell2, { StockCell2Props } from "../components/StockCell2";
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
@@ -32,27 +23,18 @@ export default function WooriBankDisplay() {
   const widths = useRef<number[]>([0, 0]);
   const animationId = useRef<number>(0);
 
-  const sections: StockCellProps[][] = useMemo(() => {
-    const perSectionSize = Math.floor(stockDupDummy.length / 3);
-    return [
-      stockDupDummy.slice(perSectionSize * 2),
-      stockDupDummy.slice(perSectionSize, perSectionSize * 2),
-      stockDupDummy.slice(0, perSectionSize),
-    ];
-  }, []);
-
   const itemPerRow = 34;
-  const rowData: [StockCellProps[], StockCellProps[]] = [[], []];
-  let currentRow = 0;
+  const rowData: [StockCell2Props[], StockCell2Props[]] = useMemo(() => {
+    const rows: [StockCell2Props[], StockCell2Props[]] = [[], []];
 
-  for (const section of sections) {
-    if (rowData[currentRow].length + section.length <= itemPerRow) {
-      rowData[currentRow].push(...section);
-    } else {
-      currentRow = 1;
-      rowData[currentRow].push(...section);
+    // 순차적으로 stockDupDummy2를 2개 row에 분배
+    for (let i = 0; i < stockDupDummy2.length; i++) {
+      const rowIndex = Math.floor(i / itemPerRow) % 2;
+      rows[rowIndex].push(stockDupDummy2[i]);
     }
-  }
+
+    return rows;
+  }, []);
 
   useEffect(() => {
     const initializeWidths = () => {

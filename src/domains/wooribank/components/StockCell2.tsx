@@ -73,7 +73,7 @@ const StockCell2 = React.memo(function StockCell2({
 
   return (
     <div
-      className="flex flex-nowrap  items-center text-white whitespace-nowrap pl-[70px] pr-[30px] py-[50px]"
+      className="flex flex-nowrap  items-center text-white whitespace-nowrap pl-[70px] pr-[30px] py-[50px] h-[265px]"
       style={{
         // 최적화된 CSS
         transform: "translate3d(0, 0, 0)",

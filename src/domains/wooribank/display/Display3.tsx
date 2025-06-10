@@ -2,7 +2,7 @@
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import StockCell from "../components/StockCell";
-import { stockDupDummy } from "@/services/dummy/stock";
+import { stockDupDummy2 } from "@/services/dummy/stock";
 
 interface StockCellProps {
   img: string;
@@ -28,11 +28,11 @@ export default function WooriBankDisplay() {
 
   // 예시 섹션 구성 (역순: section3 → section2 → section1)
   const sections: StockCellProps[][] = useMemo(() => {
-    const perSectionSize = Math.floor(stockDupDummy.length / 3);
+    const perSectionSize = Math.floor(stockDupDummy2.length / 3);
     return [
-      stockDupDummy.slice(perSectionSize * 2),
-      stockDupDummy.slice(perSectionSize, perSectionSize * 2),
-      stockDupDummy.slice(0, perSectionSize),
+      stockDupDummy2.slice(perSectionSize * 2),
+      stockDupDummy2.slice(perSectionSize, perSectionSize * 2),
+      stockDupDummy2.slice(0, perSectionSize),
     ];
   }, []);
 

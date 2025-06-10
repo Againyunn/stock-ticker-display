@@ -1,22 +1,28 @@
 import Image from "next/image";
+import { useMemo } from "react";
 
 interface StockCellProps {
   img: string;
   name: string;
-  unit: string;
   price: string;
   flag: string;
   percentage: string;
+  ghost?: boolean;
+}
+
+interface StockCellType extends StockCellProps {
+  classes?: string;
 }
 
 export default function StockCell({
   img,
   name,
-  unit,
   price,
   flag,
   percentage,
-}: StockCellProps) {
+  ghost = false,
+  classes = "",
+}: StockCellType) {
   const formattedPrice = (price: string) => {
     const priceNum = parseFloat(price);
     return priceNum.toLocaleString("en-US");
@@ -56,50 +62,58 @@ export default function StockCell({
 
     if (percentageNum > 0) {
       return (
-        <div className={`text-[#FF3B3B] font-wooridaumB`}>+{percentage}</div>
+        <div className={`text-[#FF3B3B] font-wooridaumB`}>(+{percentage})</div>
       );
     } else if (percentageNum < 0) {
       return (
-        <div className={`text-[#3A9FF1] font-wooridaumB`}>{percentage}</div>
+        <div className={`text-[#3A9FF1] font-wooridaumB`}>({percentage})</div>
       );
     } else {
-      return <div className={`text-white font-wooridaumB`}>{percentage}</div>;
+      return <div className={`text-white font-wooridaumB`}>({percentage})</div>;
     }
   };
 
+  const imageSrc = useMemo(() => {
+    if (img === "") {
+      return "";
+    } else {
+      return `/icon/${img}`;
+    }
+  }, [img]);
+  const imageAlt = useMemo(() => name + img, [name, img]);
+
+  if (ghost) {
+    return <div className={`w-[465px] ${classes}`} />;
+  }
+
   return (
     <div
-      className={`flex flex-nowrap items-center text-white font-normal whitespace-nowrap px-[12px]`}
+      className={`flex flex-nowrap items-center text-white whitespace-nowrap pl-[95px] pr-[105] px-[12px] ${classes}`}
       style={{ flex: "0 0 auto" }} // 가변 너비 고정, shrink 안 함
     >
-      <div className="flex-shrink-0">
-        <Image src={`/icon/${img}`} alt={name + img} width={80} height={60} />
-      </div>
+      {imageSrc && (
+        <div className="flex-shrink-0">
+          <Image src={imageSrc} alt={imageAlt} width={80} height={60} />
+        </div>
+      )}
       <div
-        className={`flex-shrink-0 text-[50px] font-normal ml-[50px] min-w-[200px] font-wooridaumL`}
+        className={`flex-shrink-0 text-[60px] ml-[25px] min-w-[200px] font-wooridaumR`}
       >
         {name}
       </div>
       <div
-        className={`flex-shrink-0 text-[50px] font-bold ml-[50px] min-w-[150px] font-wooridaumB`}
+        className={`flex-shrink-0 text-[70px] ml-[25px] min-w-[150px] font-wooridaumB`}
       >
         {formattedPrice(price)}
       </div>
-      {unit && (
-        <div
-          className={`flex-shrink-0 text-[25px] font-extralight text-[#929292] ml-[50px] min-w-[100px] font-wooridaumR`}
-        >
-          ({unit})
-        </div>
-      )}
 
       <div
-        className={`flex-shrink-0 min-w-[100px] text-[50px] font-bold ml-[50px] font-wooridaumB`}
+        className={`flex-shrink-0 min-w-[100px] text-[45px] ml-[25px] font-wooridaumR`}
       >
         {drawFlag(flag)}
       </div>
       <div
-        className={`flex-shrink-0 text-[50px] font-bold ml-[50px] mr-[50px] min-w-[150px] font-wooridaumB`}
+        className={`flex-shrink-0 text-[45px] ml-[50px] ml-[25px] min-w-[150px] font-wooridaumR`}
       >
         {drawPercentage(percentage)}
       </div>

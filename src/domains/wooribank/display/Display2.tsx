@@ -75,32 +75,32 @@ export default function WooriBankDisplay() {
   }, [speed, direction]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative">
-      <div className="flex flex-col gap-[42px]">
-        {[0, 1].map((rowIndex) => {
-          const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
-          return (
+    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative flex p-0">
+      {/* <div className="flex flex-col h-full"> */}
+      {[0, 1].map((rowIndex) => {
+        const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
+        return (
+          <div
+            key={`row-${rowIndex}`}
+            ref={containerRefs[rowIndex]}
+            className="w-full"
+          >
             <div
-              key={`row-${rowIndex}`}
-              ref={containerRefs[rowIndex]}
-              className="overflow-hidden w-full"
+              ref={tickerRefs[rowIndex]}
+              className="flex flex-nowrap items-center h-[265px] gap-[50px] will-change-transform p"
+              style={{
+                width: "max-content",
+                transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+              }}
             >
-              <div
-                ref={tickerRefs[rowIndex]}
-                className="flex flex-nowrap items-center gap-[50px] will-change-transform"
-                style={{
-                  width: "max-content",
-                  transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
-                }}
-              >
-                {duplicated.map((stock, idx) => (
-                  <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
-                ))}
-              </div>
+              {duplicated.map((stock, idx) => (
+                <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
+              ))}
             </div>
-          );
-        })}
-      </div>
+          </div>
+        );
+      })}
+      {/* </div> */}
     </div>
   );
 }

@@ -1,4 +1,4 @@
-export const stock1 = [
+export const stock1a = [
   {
     img: "woori.svg",
     name: "우리금융지주",
@@ -24,30 +24,6 @@ export const stock1 = [
     percentage: "0.89",
   },
   {
-    img: "kor.svg",
-    name: "KOSPI200",
-    unit: "₩",
-    price: "731.88",
-    flag: "6.48",
-    percentage: "0.89",
-  },
-  {
-    img: "kor.svg",
-    name: "KOSPI200",
-    unit: "₩",
-    price: "731.88",
-    flag: "6.48",
-    percentage: "0.89",
-  },
-  {
-    img: "usa.svg",
-    name: "DOW",
-    unit: "$",
-    price: "1160.48",
-    flag: "2.81",
-    percentage: "2.81",
-  },
-  {
     img: "usa.svg",
     name: "NASDAQ",
     unit: "$",
@@ -63,25 +39,89 @@ export const stock1 = [
     flag: "148.28",
     percentage: "3.26",
   },
+];
+
+export const stock1b = [
   {
-    img: "jpy.svg",
-    name: "NIKKEI 225",
+    img: "usa.svg",
+    name: "USD/KRW",
+    unit: "$",
+    price: "5884.19",
+    flag: "148.28",
+    percentage: "3.26",
+  },
+  {
+    img: "usa.svg",
+    name: "JPY/KRW",
+    unit: "$",
+    price: "5884.19",
+    flag: "148.28",
+    percentage: "3.26",
+  },
+  {
+    name: "EUR/KRW",
+    unit: "$",
+    price: "5884.19",
+    flag: "148.28",
+    percentage: "3.26",
+  },
+  {
+    name: "CNY/USD",
+    unit: "$",
+    price: "5884.19",
+    flag: "148.28",
+    percentage: "3.26",
+  },
+  {
+    name: "USDX",
+    unit: "$",
+    price: "5884.19",
+    flag: "148.28",
+    percentage: "3.26",
+  },
+  {
+    img: "",
+    name: "WTI",
     unit: "¥",
     price: "5884.19",
     flag: "148.28",
     percentage: "3.26",
   },
   {
-    img: "cn.svg",
-    name: "SSEC",
+    img: "",
+    name: "Gold",
     unit: "",
     price: "5884.19",
     flag: "-148.28",
     percentage: "-3.26",
   },
   {
-    img: "hk.svg",
-    name: "HSCE",
+    img: "",
+    name: "국채 3Y",
+    unit: "",
+    price: "5884.19",
+    flag: "-148.28",
+    percentage: "-3.26",
+  },
+  {
+    img: "",
+    name: "국채 10Y",
+    unit: "",
+    price: "5884.19",
+    flag: "-148.28",
+    percentage: "-3.26",
+  },
+  {
+    img: "",
+    name: "미국채 2Y",
+    unit: "",
+    price: "5884.19",
+    flag: "-148.28",
+    percentage: "-3.26",
+  },
+  {
+    img: "",
+    name: "미국채 10Y",
     unit: "",
     price: "5884.19",
     flag: "-148.28",
@@ -333,5 +373,6 @@ export const stock2 = [
   },
 ];
 
-export const stockDupDummy = [...stock1];
+export const stockDupDummy1a = [...stock1a];
+export const stockDupDummy1b = [...stock1b];
 export const stockDupDummy2 = [...stock2];

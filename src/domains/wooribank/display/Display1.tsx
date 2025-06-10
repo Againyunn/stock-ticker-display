@@ -8,25 +8,22 @@ export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
 
   // URL 파라미터에서 speed와 direction 가져오기 (기본값 설정)
-  const speed = Number(searchParams?.get("speed")) || 2; // 기본값을 Display2와 동일하게 2로 설정
-  const direction = searchParams?.get("direction") || "rtl"; // 기본 rtl (우->좌)
+  const speed = Number(searchParams?.get("speed")) || 2;
+  const direction = searchParams?.get("direction") || "rtl";
   const isLTR = direction === "ltr";
 
   const tickerRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  // const containerRefs = [
-  //   useRef<HTMLDivElement>(null),
-  //   useRef<HTMLDivElement>(null),
-  // ];
 
   const offsets = useRef<number[]>([0, 0]);
-  const widths = useRef<number[]>([0, 0]);
+  const cycleWidths = useRef<number[]>([0, 0]);
   const animationId = useRef<number>(0);
+  const isInitialized = useRef<boolean[]>([false, false]);
 
   // 무한 스크롤을 위해 데이터를 충분히 반복
-  const getRepeatedData = (data: StockCellProps[], prependSpacer = false) => {
+  const getRepeatedData = (data: StockCellProps[], addSpacer = false) => {
     const spacer = {
       name: "__SPACER__",
       unit: "",
@@ -35,72 +32,118 @@ export default function WooriBankDisplay() {
       percentage: "",
     };
 
-    const baseData = prependSpacer ? [spacer, ...data] : data;
-
-    // 복제 수를 두 배로 늘려 화면 밖에도 항상 데이터가 존재하게 함
-    const minRepeats = Math.max(40, Math.ceil(80 / baseData.length));
+    const baseData = addSpacer ? [spacer, ...data] : data;
+    const repeats = 8; // 충분한 반복을 위해 8번 반복
     const repeated: StockCellProps[] = [];
 
-    for (let i = 0; i < minRepeats; i++) {
+    for (let i = 0; i < repeats; i++) {
       repeated.push(...baseData);
     }
 
-    return repeated;
+    return { repeated, baseData };
   };
 
-  const duplicatedData1a = useMemo(() => getRepeatedData(stockDupDummy1a), []);
-  const duplicatedData1b = useMemo(
+  const { repeated: duplicatedData1a, baseData: baseData1a } = useMemo(
+    () => getRepeatedData(stockDupDummy1a, false),
+    []
+  );
+  const { repeated: duplicatedData1b, baseData: baseData1b } = useMemo(
     () => getRepeatedData(stockDupDummy1b, true),
     []
   );
+
   const rowData = [duplicatedData1a, duplicatedData1b];
+  const baseDataSets = [baseData1a, baseData1b];
 
   useEffect(() => {
-    const initializeWidths = () => {
+    const measureAndAnimate = () => {
+      let allInitialized = true;
+
       tickerRefs.forEach((ref, idx) => {
         const ticker = ref.current;
-        if (!ticker) return;
+        if (!ticker || isInitialized.current[idx]) return;
 
-        const baseLength =
-          idx === 1 ? stockDupDummy1b.length + 1 : stockDupDummy1a.length;
-
-        const totalItems = rowData[idx].length;
-        const singleItemWidth = ticker.scrollWidth / totalItems;
-        const cycleWidth = singleItemWidth * baseLength;
-
-        widths.current[idx] = cycleWidth;
-        offsets.current[idx] = isLTR ? -cycleWidth : 0;
-
-        // 초기 위치 설정
-        ticker.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
-      });
-    };
-
-    const animate = () => {
-      tickerRefs.forEach((ref, idx) => {
-        const el = ref.current;
-        if (!el) return;
-
-        const width = widths.current[idx];
-
-        if (isLTR) {
-          offsets.current[idx] += speed;
-          if (offsets.current[idx] >= 0) offsets.current[idx] = -width;
-        } else {
-          offsets.current[idx] -= speed;
-          if (Math.abs(offsets.current[idx]) >= width) offsets.current[idx] = 0;
+        const children = ticker.children;
+        if (children.length === 0) {
+          allInitialized = false;
+          return;
         }
 
-        el.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
+        // 첫 번째 사이클의 실제 너비를 정확히 측정
+        const baseLength = baseDataSets[idx].length;
+        let cycleWidth = 0;
+
+        for (let i = 0; i < baseLength; i++) {
+          const child = children[i] as HTMLElement;
+          if (child) {
+            cycleWidth += child.offsetWidth;
+          }
+        }
+
+        if (cycleWidth === 0) {
+          allInitialized = false;
+          return;
+        }
+
+        cycleWidths.current[idx] = cycleWidth;
+        isInitialized.current[idx] = true;
+
+        // 초기 위치 설정
+        if (isLTR) {
+          offsets.current[idx] = -cycleWidth;
+        } else {
+          offsets.current[idx] = 0;
+        }
+
+        ticker.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
       });
 
-      animationId.current = requestAnimationFrame(animate);
+      // 모든 행이 초기화되었을 때만 애니메이션 시작
+      if (allInitialized && !animationId.current) {
+        const animate = () => {
+          tickerRefs.forEach((ref, idx) => {
+            const el = ref.current;
+            if (!el || !isInitialized.current[idx]) return;
+
+            const cycleWidth = cycleWidths.current[idx];
+
+            if (isLTR) {
+              offsets.current[idx] += speed;
+              if (offsets.current[idx] >= 0) {
+                offsets.current[idx] = -cycleWidth;
+              }
+            } else {
+              offsets.current[idx] -= speed;
+              if (offsets.current[idx] <= -cycleWidth) {
+                offsets.current[idx] = 0;
+              }
+            }
+
+            el.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
+          });
+
+          animationId.current = requestAnimationFrame(animate);
+        };
+
+        animationId.current = requestAnimationFrame(animate);
+      } else if (!allInitialized) {
+        // 아직 초기화되지 않은 경우 다시 시도
+        setTimeout(measureAndAnimate, 50);
+      }
     };
 
-    initializeWidths();
-    animationId.current = requestAnimationFrame(animate);
+    // 초기화 상태 리셋
+    isInitialized.current = [false, false];
 
-    return () => cancelAnimationFrame(animationId.current);
+    // 측정 및 애니메이션 시작
+    measureAndAnimate();
+
+    return () => {
+      if (animationId.current) {
+        cancelAnimationFrame(animationId.current);
+        animationId.current = 0;
+      }
+    };
   }, [speed, direction, isLTR]);
 
   return (
@@ -111,7 +154,6 @@ export default function WooriBankDisplay() {
         className="flex flex-nowrap items-center will-change-transform bg-[#192D51] pt-[34px] pb-[24px] min-w-[100vw]"
         style={{
           width: "max-content",
-          transform: `translate3d(${offsets.current[0]}px, 0, 0)`,
         }}
       >
         {rowData[0].map((stock, idx) => (
@@ -125,14 +167,17 @@ export default function WooriBankDisplay() {
         className="flex flex-nowrap items-center will-change-transform bg-[#051839] pt-[34px] pb-[24px] min-w-[100vw]"
         style={{
           width: "max-content",
-          transform: `translate3d(${offsets.current[1]}px, 0, 0)`,
         }}
       >
-        {/* 첫 번째 데이터에만 offset 추가 */}
-        <div className="w-[465px] shrink-0" />
-        {rowData[1].map((stock, idx) => (
-          <StockCell key={`row2-${idx}`} {...stock} />
-        ))}
+        {rowData[1].map((stock, idx) => {
+          // spacer인 경우 빈 div로 렌더링
+          if (stock.name === "__SPACER__") {
+            return (
+              <div key={`row2-spacer-${idx}`} className="w-[465px] shrink-0" />
+            );
+          }
+          return <StockCell key={`row2-${idx}`} {...stock} />;
+        })}
       </div>
     </div>
   );

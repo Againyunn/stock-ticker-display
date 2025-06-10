@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useMemo } from "react";
 
-interface StockCellProps {
+export interface StockCellProps {
   img?: string;
   name: string;
   price: string;
@@ -20,7 +20,6 @@ export default function StockCell({
   price,
   flag,
   percentage,
-  ghost = false,
   classes = "",
 }: StockCellType) {
   const formattedPrice = (price: string) => {
@@ -84,10 +83,9 @@ export default function StockCell({
   }, [img]);
   const imageAlt = useMemo(() => name + img, [name, img]);
 
-  if (ghost) {
-    return <div className={`w-[465px] ${classes}`} />;
+  if (name === "__SPACER__") {
+    return <div className="w-[465px] shrink-0" />;
   }
-
   return (
     <div
       className={`flex flex-nowrap items-center text-white whitespace-nowrap pl-[95px] pr-[105] px-[12px] ${classes}`}

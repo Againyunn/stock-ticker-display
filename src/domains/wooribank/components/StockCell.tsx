@@ -111,7 +111,7 @@ export default function StockCell({
         {drawFlag(flag)}
       </div>
       <div
-        className={`text-[45px] leading-[100%] ml-[50px] ml-[25px] min-w-[150px] font-wooridaumR`}
+        className={`text-[45px] leading-[100%] ml-[25px] min-w-[150px] font-wooridaumR`}
       >
         {drawPercentage(percentage)}
       </div>

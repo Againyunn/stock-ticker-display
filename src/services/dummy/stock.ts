@@ -51,7 +51,7 @@ export const stock1b = [
     percentage: "3.26",
   },
   {
-    img: "usa.svg",
+    img: "jpy.svg",
     name: "JPY/KRW",
     unit: "$",
     price: "5884.19",
@@ -59,6 +59,7 @@ export const stock1b = [
     percentage: "3.26",
   },
   {
+    img: "eur.svg",
     name: "EUR/KRW",
     unit: "$",
     price: "5884.19",
@@ -66,6 +67,7 @@ export const stock1b = [
     percentage: "3.26",
   },
   {
+    img: "cn.svg",
     name: "CNY/USD",
     unit: "$",
     price: "5884.19",
@@ -73,6 +75,7 @@ export const stock1b = [
     percentage: "3.26",
   },
   {
+    img: "usa.svg",
     name: "USDX",
     unit: "$",
     price: "5884.19",
@@ -221,7 +224,7 @@ export const stock2 = [
     ],
   },
   {
-    img: "usa.svg",
+    img: "jpy.svg",
     name: "JPY/KRW",
     unit: "$",
     price: "5884.19",
@@ -236,7 +239,7 @@ export const stock2 = [
     ],
   },
   {
-    img: "usa.svg",
+    img: "eur.svg",
     name: "EUR/KRW",
     unit: "$",
     price: "5884.19",
@@ -251,7 +254,7 @@ export const stock2 = [
     ],
   },
   {
-    img: "usa.svg",
+    img: "cn.svg",
     name: "CNY/USD",
     unit: "$",
     price: "5884.19",

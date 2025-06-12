@@ -1,122 +1,152 @@
 "use client";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import StockCell from "../components/StockCell";
-import { stockDupDummy1a, stockDupDummy1b } from "@/services/dummy/stock";
-
-interface StockCellProps {
-  img: string;
-  name: string;
-  unit: string;
-  price: string;
-  flag: string;
-  percentage: string;
-}
+import { stockDupDummy2 } from "@/services/dummy/stock";
+import StockCell2, { StockCell2Props } from "../components/StockCell2";
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
+  const speed = Number(searchParams?.get("speed")) || 2;
+  const direction = searchParams?.get("direction") || "rtl"; // rtl: 우->좌, ltr: 좌->우
+  const isLTR = direction === "ltr";
+
   const tickerRefs = [
     useRef<HTMLDivElement>(null),
     useRef<HTMLDivElement>(null),
   ];
-  const speed = Number(searchParams?.get("speed")) || 2;
-  const direction = searchParams?.get("direction") || "rtl"; // rtl: 우->좌, ltr: 좌->우
-  const animationIds = useRef<number[]>([]);
-  const offsets = useRef<number[]>([0, 0]);
-  const rowWidths = useRef<number[]>([0, 0]);
-
-  const isLTR = direction === "ltr";
-
-  // 1행: stockDupDummy1a를 3배로, 2행: stockDupDummy1b를 3배로 (img가 없는 경우 빈 문자열로 처리)
-  const rowData: [StockCellProps[], StockCellProps[]] = [
-    [
-      ...stockDupDummy1a.map((stock) => ({ ...stock, img: stock.img || "" })),
-      ...stockDupDummy1a.map((stock) => ({ ...stock, img: stock.img || "" })),
-      ...stockDupDummy1a.map((stock) => ({ ...stock, img: stock.img || "" })),
-    ],
-    [
-      ...stockDupDummy1b.map((stock) => ({ ...stock, img: stock.img || "" })),
-      ...stockDupDummy1b.map((stock) => ({ ...stock, img: stock.img || "" })),
-      ...stockDupDummy1b.map((stock) => ({ ...stock, img: stock.img || "" })),
-    ],
+  const containerRefs = [
+    useRef<HTMLDivElement>(null),
+    useRef<HTMLDivElement>(null),
   ];
+  const backgroundRef = useRef<HTMLDivElement>(null);
+
+  const offsets = useRef<number[]>([0, 0]);
+  const widths = useRef<number[]>([0, 0]);
+  const backgroundOffset = useRef<number>(0);
+  const animationId = useRef<number>(0);
+
+  // 화면 너비와 배경 설정
+  const screenWidth = 19712;
+  const backgroundWidth = screenWidth * 2; // 화면 너비의 2배로 설정
+
+  const itemPerRow = 34;
+  const rowData: [StockCell2Props[], StockCell2Props[]] = useMemo(() => {
+    const rows: [StockCell2Props[], StockCell2Props[]] = [[], []];
+
+    // 순차적으로 stockDupDummy2를 2개 row에 분배
+    for (let i = 0; i < stockDupDummy2.length; i++) {
+      const rowIndex = Math.floor(i / itemPerRow) % 2;
+      rows[rowIndex].push(stockDupDummy2[i]);
+    }
+
+    return rows;
+  }, []);
 
   useEffect(() => {
-    const initAndAnimate = (rowIndex: number) => {
-      const ticker = tickerRefs[rowIndex].current;
-      if (!ticker) return;
-
-      // 각 행의 실제 너비를 개별적으로 계산 (3배로 복사된 데이터의 1/3)
-      const fullWidth = ticker.scrollWidth;
-      const singleSetWidth = fullWidth / 3;
-      rowWidths.current[rowIndex] = singleSetWidth;
-
-      // 각 행별로 초기 위치 설정
-      if (isLTR) {
-        offsets.current[rowIndex] = -singleSetWidth;
-      } else {
-        offsets.current[rowIndex] = 0;
-      }
-
-      const animate = () => {
-        const ticker = tickerRefs[rowIndex].current;
+    const initializeWidths = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const ticker = ref.current;
         if (!ticker) return;
+        const scrollWidth = ticker.scrollWidth / 2;
+        widths.current[idx] = scrollWidth;
+        offsets.current[idx] = isLTR ? -scrollWidth : 0;
+      });
+      // 배경 초기 위치 설정 - 화면 너비에 맞춰 조정
+      backgroundOffset.current = isLTR ? -backgroundWidth / 2 : 0;
+    };
 
-        const singleSetWidth = rowWidths.current[rowIndex];
+    const animate = () => {
+      tickerRefs.forEach((ref, idx) => {
+        const el = ref.current;
+        if (!el) return;
+
+        const width = widths.current[idx];
 
         if (isLTR) {
-          offsets.current[rowIndex] += speed;
-          // 한 세트만큼 이동했으면 다시 처음으로
-          if (offsets.current[rowIndex] >= 0) {
-            offsets.current[rowIndex] = -singleSetWidth;
+          offsets.current[idx] += speed;
+          if (offsets.current[idx] >= 0) offsets.current[idx] = -width;
+        } else {
+          offsets.current[idx] -= speed;
+          if (Math.abs(offsets.current[idx]) >= width) offsets.current[idx] = 0;
+        }
+
+        el.style.transform = `translate3d(${offsets.current[idx]}px, 0, 0)`;
+      });
+
+      // 배경 애니메이션 - 화면을 완전히 벗어날 때까지 리셋하지 않음
+      const backgroundEl = backgroundRef.current;
+      if (backgroundEl) {
+        if (isLTR) {
+          backgroundOffset.current += speed;
+          // 배경이 화면을 완전히 벗어나면 리셋
+          if (backgroundOffset.current >= screenWidth) {
+            backgroundOffset.current = -backgroundWidth / 2;
           }
         } else {
-          offsets.current[rowIndex] -= speed;
-          // 한 세트만큼 이동했으면 다시 처음으로
-          if (Math.abs(offsets.current[rowIndex]) >= singleSetWidth) {
-            offsets.current[rowIndex] = 0;
+          backgroundOffset.current -= speed;
+          // 배경이 화면을 완전히 벗어나면 리셋
+          if (
+            Math.abs(backgroundOffset.current) >=
+            screenWidth + backgroundWidth / 2
+          ) {
+            backgroundOffset.current = 0;
           }
         }
 
-        ticker.style.transform = `translateX(${offsets.current[rowIndex]}px)`;
-        animationIds.current[rowIndex] = requestAnimationFrame(animate);
-      };
+        backgroundEl.style.transform = `translate3d(${backgroundOffset.current}px, 0, 0)`;
+      }
 
-      animationIds.current[rowIndex] = requestAnimationFrame(animate);
+      animationId.current = requestAnimationFrame(animate);
     };
 
-    // 각 행에 대해 독립적으로 애니메이션 초기화
-    tickerRefs.forEach((_, i) => {
-      initAndAnimate(i);
-    });
+    initializeWidths();
+    animationId.current = requestAnimationFrame(animate);
 
-    return () => {
-      animationIds.current.forEach((id) => cancelAnimationFrame(id));
-    };
-  }, [speed, direction]);
+    return () => cancelAnimationFrame(animationId.current);
+  }, [speed, direction, backgroundWidth, screenWidth]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] flex flex-col overflow-hidden text-center relative p-0">
-      {[0, 1].map((rowIndex) => (
-        <div
-          key={`row-${rowIndex}`}
-          ref={tickerRefs[rowIndex]}
-          className="flex flex-nowrap items-center gap-[50px] will-change-transform pt-[34px] pb-[24px] h-[128px]"
-          style={{
-            width: "max-content",
-            transform: isLTR ? `translateX(-9999px)` : `translateX(0px)`,
-            backgroundColor: rowIndex === 0 ? "#192D51" : "#051839",
-          }}
-        >
-          {rowData[rowIndex].map((stock, idx) => (
-            <StockCell
-              key={`${rowIndex}-${idx}`}
-              classes={rowIndex === 1 && idx === 0 ? "pl-[465px]" : ""}
-              {...stock}
-            />
-          ))}
-        </div>
-      ))}
+    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative flex p-0">
+      {/* 움직이는 배경 레이어 */}
+      <div
+        ref={backgroundRef}
+        className="absolute inset-0 will-change-transform z-0"
+        style={{
+          background: `url('/img/wooribank1.png') repeat-x`,
+          backgroundSize: "auto 100%",
+          width: `${backgroundWidth}px`, // 화면 너비의 2배
+          transform: `translate3d(${
+            isLTR ? `-${backgroundWidth / 2}px` : "0px"
+          }, 0, 0)`,
+        }}
+      />
+
+      {/* 콘텐츠 레이어 */}
+      <div className="relative z-10 flex w-full">
+        {[0, 1].map((rowIndex) => {
+          const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
+          return (
+            <div
+              key={`row-${rowIndex}`}
+              ref={containerRefs[rowIndex]}
+              className="w-full"
+            >
+              <div
+                ref={tickerRefs[rowIndex]}
+                className="flex flex-nowrap items-center h-[265px] gap-[50px] will-change-transform p"
+                style={{
+                  width: "max-content",
+                  transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
+                }}
+              >
+                {duplicated.map((stock, idx) => (
+                  <StockCell2 key={`${rowIndex}-${idx}`} {...stock} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

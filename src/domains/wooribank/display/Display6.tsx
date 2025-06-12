@@ -2,8 +2,7 @@
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { stockDupDummy2 } from "@/services/dummy/stock";
-import { StockCell2Props } from "../components/StockCell2";
-import StockCell5 from "../components/StockCell5";
+import StockCell6, { StockCell6Props } from "../components/StockCell6";
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
@@ -31,8 +30,8 @@ export default function WooriBankDisplay() {
   const backgroundWidth = screenWidth * 2; // 화면 너비의 2배로 설정
 
   const itemPerRow = 34;
-  const rowData: [StockCell2Props[], StockCell2Props[]] = useMemo(() => {
-    const rows: [StockCell2Props[], StockCell2Props[]] = [[], []];
+  const rowData: [StockCell6Props[], StockCell6Props[]] = useMemo(() => {
+    const rows: [StockCell6Props[], StockCell6Props[]] = [[], []];
 
     // 순차적으로 stockDupDummy2를 2개 row에 분배
     for (let i = 0; i < stockDupDummy2.length; i++) {
@@ -136,12 +135,12 @@ export default function WooriBankDisplay() {
                 ref={tickerRefs[rowIndex]}
                 className="flex flex-nowrap items-center h-[265px] gap-[50px] will-change-transform p"
                 style={{
-                  width: "max-content",
+                  width: "2100px",
                   transform: `translate3d(${isLTR ? "-9999px" : "0px"}, 0, 0)`,
                 }}
               >
                 {duplicated.map((stock, idx) => (
-                  <StockCell5 key={`${rowIndex}-${idx}`} {...stock} />
+                  <StockCell6 key={`${rowIndex}-${idx}`} {...stock} />
                 ))}
               </div>
             </div>

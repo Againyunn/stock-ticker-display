@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import { calculate } from "../utils/calculate";
 import IMSparklineUpdownChart from "@/components/chart/IMSparklineUpdownChart";
+import { theme } from "../utils/theme";
 
 export interface StockCell6Props {
   img: string;
@@ -10,6 +11,7 @@ export interface StockCell6Props {
   flag: string;
   percentage: string;
   data: number[];
+  isEven?: boolean;
 }
 
 const StockCell6 = React.memo(function StockCell6({
@@ -19,6 +21,7 @@ const StockCell6 = React.memo(function StockCell6({
   flag,
   percentage,
   data,
+  isEven = false,
 }: StockCell6Props) {
   // 모든 계산을 미리 메모이제이션
   const formattedPrice = useMemo(
@@ -42,9 +45,9 @@ const StockCell6 = React.memo(function StockCell6({
     const flagAbs = Math.abs(flagNum);
 
     if (flagNum > 0) {
-      return { symbol: "▲", value: flagAbs, color: "#FF3B3B" };
+      return { symbol: "▲", value: flagAbs, color: theme.flag.upColor };
     } else if (flagNum < 0) {
-      return { symbol: "▼", value: flagAbs, color: "#1586EE" };
+      return { symbol: "▼", value: flagAbs, color: theme.flag.downColor };
     } else {
       return { symbol: "-", value: flagAbs, color: "white" };
     }
@@ -54,9 +57,9 @@ const StockCell6 = React.memo(function StockCell6({
     const percentageNum = parseFloat(percentage);
 
     if (percentageNum > 0) {
-      return { text: `+${percentage}%`, color: "#FF3B3B" };
+      return { text: `+${percentage}%`, color: theme.flag.upColor };
     } else if (percentageNum < 0) {
-      return { text: `${percentage}%`, color: "#1586EE" };
+      return { text: `${percentage}%`, color: theme.percentage.downColor };
     } else {
       return { text: `${percentage}%`, color: "white" };
     }
@@ -128,13 +131,14 @@ const StockCell6 = React.memo(function StockCell6({
         style={{ contain: "layout style" }}
       >
         <div
-          className="min-w-[100px] ml-[80px] font-wooridaumR flex flex-row flex-nowrap"
+          className={`min-w-[100px] ml-[80px] font-wooridaumR flex flex-row flex-nowrap`}
           style={{
             contain: "layout style",
+            color: flagData.color,
           }}
         >
           <span
-            className="mr-[20px] text-[57px] leading-[130%]"
+            className="mr-[20px] text-[57px] leading-[140%]"
             style={{
               color: flagData.color,
             }}
@@ -148,6 +152,7 @@ const StockCell6 = React.memo(function StockCell6({
           className="text-[90px] leading-[100%] ml-[30px] min-w-[150px] font-wooridaumR"
           style={{
             contain: "layout style",
+            color: percentageData.color,
           }}
         >
           ({percentageData.text})
@@ -156,8 +161,8 @@ const StockCell6 = React.memo(function StockCell6({
       <div className="flex flex-row flex-nowrap ml-[70px] mr-[100px]">
         <IMSparklineUpdownChart
           data={data}
-          positiveLineColor="#FF3B3B"
-          negativeLineColor="#1586EE"
+          positiveLineColor={theme.flag.upColor}
+          negativeLineColor={theme.flag.downColor}
           positiveAreaColor=""
           negativeAreaColor=""
           centerLineColor=""
@@ -169,9 +174,9 @@ const StockCell6 = React.memo(function StockCell6({
         />
       </div>
 
-      <div className="h-[120px] w-[4px] bg-[#ffffff20]"></div>
+      <div className="block h-[120px] min-w-[4px] bg-[#ffffff40]"></div>
 
-      <Image
+      {/* <Image
         src="/icon/wooribank_ci.svg"
         alt="Woori Bank CI"
         width={120}
@@ -188,7 +193,33 @@ const StockCell6 = React.memo(function StockCell6({
           width: "300px",
           height: "60px",
         }}
-      />
+      /> */}
+      <div
+        style={{
+          objectFit: "contain",
+          display: "block",
+          position: "absolute",
+          bottom: 20,
+          right: -110,
+          zIndex: 100,
+          width: "300px",
+          height: "60px",
+        }}
+      >
+        <div className="flex flex-row flex-nowrap items-center justify-center">
+          <Image
+            src="/icon/woori.svg"
+            alt="Woori Bank CI"
+            width={50}
+            height={50}
+            priority
+            quality={75}
+          />
+          <span className="text-[34px] leading-[100%] ml-[5px]">
+            {isEven ? "우리금융그룹" : "우리은행"}
+          </span>
+        </div>
+      </div>
     </div>
   );
 });

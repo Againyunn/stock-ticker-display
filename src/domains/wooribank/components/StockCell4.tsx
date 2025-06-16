@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import Image from "next/image";
 import { calculate } from "../utils/calculate";
 import IMSparklineUpdownChart from "@/components/chart/IMSparklineUpdownChart";
+import { theme } from "../utils/theme";
 
 export interface StockCell4Props {
   img: string;
@@ -42,9 +43,9 @@ const StockCell4 = React.memo(function StockCell2({
     const flagAbs = Math.abs(flagNum);
 
     if (flagNum > 0) {
-      return { symbol: "▲", value: flagAbs, color: "#FF3B3B" };
+      return { symbol: "▲", value: flagAbs, color: theme.flag.upColor };
     } else if (flagNum < 0) {
-      return { symbol: "▼", value: flagAbs, color: "#1586EE" };
+      return { symbol: "▼", value: flagAbs, color: theme.flag.downColor };
     } else {
       return { symbol: "-", value: flagAbs, color: "white" };
     }
@@ -54,9 +55,9 @@ const StockCell4 = React.memo(function StockCell2({
     const percentageNum = parseFloat(percentage);
 
     if (percentageNum > 0) {
-      return { text: `+${percentage}%`, color: "#FF3B3B" };
+      return { text: `+${percentage}%`, color: theme.flag.upColor };
     } else if (percentageNum < 0) {
-      return { text: `${percentage}%`, color: "#1586EE" };
+      return { text: `${percentage}%`, color: theme.flag.downColor };
     } else {
       return { text: `${percentage}%`, color: "white" };
     }
@@ -158,8 +159,8 @@ const StockCell4 = React.memo(function StockCell2({
       <div className="flex flex-row flex-nowrap ml-[70px] mr-[100px]">
         <IMSparklineUpdownChart
           data={data}
-          positiveLineColor="#FF3B3B"
-          negativeLineColor="#1586EE"
+          positiveLineColor={theme.flag.upColor}
+          negativeLineColor={theme.flag.downColor}
           positiveAreaColor=""
           negativeAreaColor=""
           centerLineColor=""
@@ -171,7 +172,7 @@ const StockCell4 = React.memo(function StockCell2({
         />
       </div>
 
-      <div className="h-[120px] w-[4px] bg-[#ffffff20]"></div>
+      <div className="h-[120px] min-w-[4px] bg-[#ffffff20]"></div>
 
       <Image
         src="/icon/wooribank_ci.svg"

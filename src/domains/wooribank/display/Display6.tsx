@@ -140,7 +140,11 @@ export default function WooriBankDisplay() {
                 }}
               >
                 {duplicated.map((stock, idx) => (
-                  <StockCell6 key={`${rowIndex}-${idx}`} {...stock} />
+                  <StockCell6
+                    key={`${rowIndex}-${idx}`}
+                    isEven={idx % 2 === 0}
+                    {...stock}
+                  />
                 ))}
               </div>
             </div>

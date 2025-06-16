@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useMemo } from "react";
+import { theme } from "../utils/theme";
 
 export interface StockCellProps {
   img?: string;
@@ -34,7 +35,7 @@ export default function StockCell({
     if (flagNum > 0) {
       return (
         <div
-          className={`flex flex-row flex-nowrap text-[#FF3B3B] font-wooridaumB`}
+          className={`flex flex-row flex-nowrap text-[${theme.flag.upColor}] font-wooridaumB`}
         >
           ▲ {flagAbs}
         </div>
@@ -42,7 +43,7 @@ export default function StockCell({
     } else if (flagNum < 0) {
       return (
         <div
-          className={`flex flex-row flex-nowrap text-[#3A9FF1] font-wooridaumB`}
+          className={`flex flex-row flex-nowrap text-[${theme.flag.downColor}] font-wooridaumB`}
         >
           ▼ {flagAbs}
         </div>
@@ -61,11 +62,15 @@ export default function StockCell({
 
     if (percentageNum > 0) {
       return (
-        <div className={`text-[#FF3B3B] font-wooridaumB`}>(+{percentage}%)</div>
+        <div className={`text-[${theme.flag.upColor}] font-wooridaumB`}>
+          (+{percentage}%)
+        </div>
       );
     } else if (percentageNum < 0) {
       return (
-        <div className={`text-[#3A9FF1] font-wooridaumB`}>({percentage}%)</div>
+        <div className={`text-[${theme.flag.downColor}] font-wooridaumB`}>
+          ({percentage}%)
+        </div>
       );
     } else {
       return (

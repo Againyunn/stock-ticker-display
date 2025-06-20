@@ -1,7 +1,9 @@
 "use client";
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import StockCell, { StockCellProps } from "../components/StockCell";
+import StockCell, {
+  StockCellProps,
+} from "../components/TikcerDisplay/StockCell";
 import { stockDupDummy1a, stockDupDummy1b } from "@/services/dummy/stock";
 
 export default function WooriBankDisplay() {
@@ -147,14 +149,14 @@ export default function WooriBankDisplay() {
   }, [speed, direction, isLTR]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] overflow-hidden relative flex flex-col p-0">
+    <div className="w-full min-w-[19584px] h-[256px] overflow-hidden relative flex flex-col p-0">
       {/* 첫 번째 행 - stockDupDummy1a */}
       <div
         ref={tickerRefs[0]}
-        className="flex flex-nowrap items-center will-change-transform bg-[#192D51] pt-[34px] pb-[24px] min-w-[100vw]"
-        style={{
-          width: "max-content",
-        }}
+        className="flex flex-nowrap items-center will-change-transform bg-[#192D51] pt-[34px] pb-[24px] min-w-[100vw] max-content-width"
+        // style={{
+        //   width: "max-content",
+        // }}
       >
         {rowData[0].map((stock, idx) => (
           <StockCell key={`row1-${idx}`} {...stock} />
@@ -164,10 +166,7 @@ export default function WooriBankDisplay() {
       {/* 두 번째 행 - stockDupDummy1b */}
       <div
         ref={tickerRefs[1]}
-        className="flex flex-nowrap items-center will-change-transform bg-[#051839] pt-[34px] pb-[24px] min-w-[100vw]"
-        style={{
-          width: "max-content",
-        }}
+        className="flex flex-nowrap items-center will-change-transform bg-[#051839] pt-[34px] pb-[24px] min-w-[100vw] max-content-width"
       >
         {rowData[1].map((stock, idx) => {
           // spacer인 경우 빈 div로 렌더링

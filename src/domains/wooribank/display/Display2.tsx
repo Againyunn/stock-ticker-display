@@ -2,7 +2,9 @@
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { stockDupDummy2 } from "@/services/dummy/stock";
-import StockCell2, { StockCell2Props } from "../components/StockCell2";
+import StockCell2, {
+  StockCell2Props,
+} from "../components/TikcerDisplay/StockCell2";
 
 export default function WooriBankDisplay() {
   const searchParams = useSearchParams();
@@ -75,7 +77,7 @@ export default function WooriBankDisplay() {
   }, [speed, direction]);
 
   return (
-    <div className="w-full min-w-[19712px] h-[256px] bg-[#0d1a3b] overflow-hidden relative flex p-0">
+    <div className="w-full min-w-[19584px] h-[256px] bg-[#0d1a3b] overflow-hidden relative flex p-0">
       {/* <div className="flex flex-col h-full"> */}
       {[0, 1].map((rowIndex) => {
         const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];

@@ -1,7 +1,7 @@
 "use client";
 import { useRef, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import StockCell from "../components/StockCell";
+import StockCell from "../components/TikcerDisplay/StockCell";
 import { stockDupDummy2 } from "@/services/dummy/stock";
 
 interface StockCellProps {

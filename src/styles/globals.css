@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* 공통 스타일 추가 */
+@import "./common/common.css";
+
+/* 고객사별 스타일 추가 */
+@import "./wooribank/components.css";
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -15,6 +21,8 @@
   --font-wooridaumR: var(--font-wooridaumR);
   --font-wooridaumL: var(--font-wooridaumL);
   --font-wooridaumB: var(--font-wooridaumB);
+
+  /* 배경 이미지 설정 (Tailwind CSS v4 방식) */
 }
 
 @media (prefers-color-scheme: dark) {

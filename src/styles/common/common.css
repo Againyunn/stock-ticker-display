@@ -1,0 +1,24 @@
+@layer base {
+  body {
+  }
+}
+
+@layer components {
+  .max-content-width {
+    width: max-content;
+  }
+
+  /* GradientBox */
+  .background-gradient-box {
+    background: linear-gradient(
+      303.83deg,
+      rgba(255, 255, 255, 0.06) 1.35%,
+      rgba(0, 101, 168, 0.24) 70.86%,
+      rgba(0, 10, 17, 0.3) 100%
+    );
+  }
+
+  .rounded-50 {
+    border-radius: 50px;
+  }
+}

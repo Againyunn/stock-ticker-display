@@ -17,4 +17,8 @@
       rgba(0, 10, 17, 0.3) 100%
     );
   }
+
+  .background-wooribank-1 {
+    background: url("/img/wooribank1.png") repeat-x;
+  }
 }

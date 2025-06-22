@@ -74,18 +74,18 @@ const StockCell5 = React.memo(function StockCell5({
 
   return (
     <div
-      className="flex flex-nowrap  items-center text-white whitespace-nowrap pl-[70px] pr-[30px] py-[50px] h-[265px]"
-      style={{
-        // 최적화된 CSS
-        transform: "translate3d(0, 0, 0)",
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitBackfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
-        textRendering: "optimizeSpeed",
-        contain: "layout style",
-        isolation: "isolate",
-      }}
+      className="flex flex-nowrap  items-center text-white whitespace-nowrap pl-[70px] pr-[30px] py-[50px] h-[256px]"
+      // style={{
+      //   // 최적화된 CSS
+      //   transform: "translate3d(0, 0, 0)",
+      //   willChange: "transform",
+      //   backfaceVisibility: "hidden",
+      //   WebkitBackfaceVisibility: "hidden",
+      //   WebkitFontSmoothing: "antialiased",
+      //   textRendering: "optimizeSpeed",
+      //   contain: "layout style",
+      //   isolation: "isolate",
+      // }}
     >
       <div
         className="flex flex-nowrap w-full h-[85px] items-center p-0 mb-[5px]"

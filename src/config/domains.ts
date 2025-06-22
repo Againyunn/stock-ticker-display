@@ -4,7 +4,7 @@ export const domainConfigs: Record<string, DomainConfig> = {
   wooribank: {
     id: "wooribank",
     name: "우리은행",
-    number: 5,
+    number: 10,
     iconUrl: "/icon/woori.svg",
     component: "WooribankDisplay",
     dataSource: {
@@ -16,7 +16,7 @@ export const domainConfigs: Record<string, DomainConfig> = {
       theme: "light",
       columns: 2,
       rows: 1,
-      width: 19172,
+      width: 19584,
       height: 256,
     },
   },

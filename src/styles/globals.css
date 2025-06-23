@@ -74,7 +74,6 @@ body {
   -webkit-transform: translate3d(0, 0, 0) !important;
   transform: translate3d(0, 0, 0) !important;
   backface-visibility: hidden !important;
-  perspective: 1000px !important;
 
   /* 폰트 스무딩 비활성화 */
   -webkit-font-smoothing: none !important;
@@ -82,5 +81,4 @@ body {
 
   /* GPU 렌더링 강제 */
   will-change: transform;
-  contain: layout style paint;
 }

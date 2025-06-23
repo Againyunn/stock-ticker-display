@@ -55,6 +55,9 @@ export default function WooriBankDisplay() {
   return (
     <div
       className={`w-full min-w-[${screenWidth}px] h-[${screenHeight}px] overflow-hidden relative flex flex-col p-0`}
+      style={{
+        width: `${screenWidth}px`,
+      }}
     >
       {/* 첫 번째 행 - stockDupDummy1a */}
       <IMMarquee

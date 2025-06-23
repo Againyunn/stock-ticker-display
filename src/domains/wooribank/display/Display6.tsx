@@ -33,10 +33,13 @@ export default function WooriBankDisplay() {
 
   return (
     <div
-      className={`w-full min-w-[${screenWidth}px] h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0`}
+      className={`h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0 `}
+      style={{
+        width: `${screenWidth}px`,
+      }}
     >
       <IMMarquee
-        className={`relative flex w-full h-[${screenHeight}px]`}
+        className={`relative flex w-[${screenWidth}px] h-[${screenHeight}px]`}
         speed={speed * 100}
         direction={isLTR ? "right" : "left"}
         background={`url('/img/wooribank1.png') repeat-x`}
@@ -46,7 +49,10 @@ export default function WooriBankDisplay() {
         {[0, 1].map((rowIndex) => {
           const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
           return (
-            <div key={`row-${rowIndex}`} className="w-full relative">
+            <div
+              key={`row-${rowIndex}`}
+              className={`w-[${screenWidth}px] relative`}
+            >
               <div
                 className={`flex flex-nowrap items-center h-[${screenHeight}px] gap-[50px]`}
               >

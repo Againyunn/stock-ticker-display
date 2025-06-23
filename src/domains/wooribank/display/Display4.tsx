@@ -33,7 +33,10 @@ export default function WooriBankDisplay() {
 
   return (
     <div
-      className={`w-full min-w-[${screenWidth}px] h-[${screenHeight}px] min-h-[${screenHeight}px] max-h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0`}
+      className={`w-full h-[${screenHeight}px] min-h-[${screenHeight}px] max-h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0`}
+      style={{
+        width: `${screenWidth}px`,
+      }}
     >
       <IMMarquee
         className={`relative flex w-full h-[${screenHeight}px]`}

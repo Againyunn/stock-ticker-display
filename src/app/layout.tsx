@@ -24,7 +24,7 @@ export default function RootLayout({
       <head>
         <link rel="icon" href="/icon/infomax.svg" />
       </head>
-      <body className="font-wooridaumR">{children}</body>
+      <body className="font-wooridaumR h-full">{children}</body>
     </html>
   );
 }

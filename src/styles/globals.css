@@ -32,10 +32,55 @@
   }
 }
 
+/* 정확한 픽셀 렌더링을 위한 리셋 설정 */
+*::before,
+*::after {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html {
+  /* 정확한 픽셀 렌더링을 위한 설정 */
+  -webkit-text-size-adjust: none !important;
+  -ms-text-size-adjust: none !important;
+  text-size-adjust: none !important;
+  text-rendering: geometricPrecision !important;
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: unset !important;
+
+  /* 브라우저 줌 관련 설정 */
+  zoom: 1 !important;
+
+  /* 서브픽셀 렌더링 방지 */
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+
+  /* 픽셀 정확도 */
+  image-rendering: pixelated !important;
+  image-rendering: -moz-crisp-edges !important;
+  image-rendering: crisp-edges !important;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  margin: 0;
-  padding: 0;
-  line-height: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0px solid;
+  line-height: 1 !important;
+
+  /* 정확한 픽셀 렌더링을 위한 추가 설정 */
+  -webkit-transform: translate3d(0, 0, 0) !important;
+  transform: translate3d(0, 0, 0) !important;
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+
+  /* 폰트 스무딩 비활성화 */
+  -webkit-font-smoothing: none !important;
+  -moz-osx-font-smoothing: unset !important;
+
+  /* GPU 렌더링 강제 */
+  will-change: transform;
+  contain: layout style paint;
 }

@@ -73,25 +73,9 @@ const StockCell4 = React.memo(function StockCell2({
   const imageAlt = useMemo(() => name + img, [name, img]);
 
   return (
-    <div
-      className="relative flex flex-nowrap  items-center text-white whitespace-nowrap pl-[70px] pr-[30px] py-[50px] h-[265px]"
-      style={{
-        // 최적화된 CSS
-        transform: "translate3d(0, 0, 0)",
-        willChange: "transform",
-        backfaceVisibility: "hidden",
-        WebkitBackfaceVisibility: "hidden",
-        WebkitFontSmoothing: "antialiased",
-        textRendering: "optimizeSpeed",
-        contain: "layout style",
-        isolation: "isolate",
-      }}
-    >
+    <div className="relative flex flex-nowrap items-center text-white whitespace-nowrap pl-[30px] pr-[30px] py-[50px] h-[256px] min-h-[256px] max-h-[256px]">
       <div className="flex flex-col flex-nowrap">
-        <div
-          className="flex flex-nowrap w-full h-[85px] items-center p-0 mb-[5px]"
-          style={{ contain: "layout style" }}
-        >
+        <div className="flex flex-nowrap w-full h-[85px] items-center p-0 mb-[5px]">
           {imageSrc && (
             <div style={{ width: 120, height: 90, flexShrink: 0 }}>
               <Image
@@ -110,31 +94,17 @@ const StockCell4 = React.memo(function StockCell2({
             </div>
           )}
 
-          <div
-            className="text-[85px] leading-[100%] ml-[30px] min-w-[200px] font-wooridaumR"
-            style={{ contain: "layout style" }}
-          >
+          <div className="text-[85px] leading-[100%] ml-[30px] min-w-[200px] font-wooridaumR">
             {name}
           </div>
 
-          <div
-            className="text-[85px] leading-[100%] ml-[30px] min-w-[150px] font-wooridaumR"
-            style={{ contain: "layout style" }}
-          >
+          <div className="text-[85px] leading-[100%] ml-[30px] min-w-[150px] font-wooridaumR">
             {formattedPrice}
           </div>
         </div>
 
-        <div
-          className="flex flex-nowrap justify-end items-end w-full h-[75px]"
-          style={{ contain: "layout style" }}
-        >
-          <div
-            className="min-w-[100px] leading-[100%] text-[55px] ml-[50px] font-wooridaumR flex flex-row flex-nowrap"
-            style={{
-              contain: "layout style",
-            }}
-          >
+        <div className="flex flex-nowrap justify-end items-end w-full h-[75px]">
+          <div className="min-w-[100px] leading-[100%] text-[55px] ml-[50px] font-wooridaumR flex flex-row flex-nowrap">
             <span
               className="mr-[20px]"
               style={{
@@ -146,12 +116,7 @@ const StockCell4 = React.memo(function StockCell2({
             {flagData.value}
           </div>
 
-          <div
-            className="text-[55px] leading-[100%] ml-[50px] min-w-[150px] font-wooridaumR"
-            style={{
-              contain: "layout style",
-            }}
-          >
+          <div className="text-[55px] leading-[100%] ml-[50px] min-w-[150px] font-wooridaumR">
             {percentageData.text}
           </div>
         </div>

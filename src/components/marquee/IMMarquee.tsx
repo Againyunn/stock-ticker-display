@@ -1,10 +1,11 @@
-import { ReactNode } from "react";
+import { ReactNode, CSSProperties } from "react";
 import Marquee from "react-fast-marquee";
 
 interface IMMarqueeProps {
   dataList?: string[] | ReactNode[];
   className?: string;
   contentClassName?: string;
+  style?: CSSProperties;
   speed?: number;
   direction?: "left" | "right" | "up" | "down";
   gradient?: boolean;
@@ -22,6 +23,7 @@ export default function IMMarquee({
   dataList = [],
   className,
   contentClassName,
+  style,
   speed = 100,
   direction = "left",
   gradient = false,
@@ -48,6 +50,7 @@ export default function IMMarquee({
           ? "transparent"
           : background || "transparent",
         height: height ? `${height}px` : "auto",
+        ...style,
       }}
     >
       {backgroundFixed && (

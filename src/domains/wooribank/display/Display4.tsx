@@ -33,7 +33,7 @@ export default function WooriBankDisplay() {
 
   return (
     <div
-      className={`w-full min-w-[${screenWidth}px] h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0`}
+      className={`w-full min-w-[${screenWidth}px] h-[${screenHeight}px] min-h-[${screenHeight}px] max-h-[${screenHeight}px] bg-[#0d1a3b] overflow-hidden relative flex p-0`}
     >
       <IMMarquee
         className={`relative flex w-full h-[${screenHeight}px]`}
@@ -41,7 +41,7 @@ export default function WooriBankDisplay() {
         direction={isLTR ? "right" : "left"}
         background={`url('/img/wooribank1.png') repeat-x`}
         backgroundFixed={true}
-        height={256}
+        height={screenHeight}
       >
         {[0, 1].map((rowIndex) => {
           const duplicated = [...rowData[rowIndex], ...rowData[rowIndex]];
